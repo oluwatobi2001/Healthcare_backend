@@ -22,6 +22,10 @@ module.exports = (sequelize) => {
       allowNull: false,
       unique: true,
     },
+    gender: {
+type: Sequelize.DataTypes.ENUM("male", "female"),
+allowNull: false
+    },
     password: {
       type: Sequelize.DataTypes.STRING,
       allowNull: false,
@@ -33,8 +37,8 @@ module.exports = (sequelize) => {
     },
     isVerified: {
       type: Sequelize.DataTypes.BOOLEAN,
-      allowNull: false,
-      default: false
+    
+      defaultValue: false
     }
   });
 };

@@ -13,7 +13,8 @@ const UserRegSchema =  Joi.object({
     lastName: Joi.string().min(3).max(30).required(),
     role: Joi.string().required(),
     password: Joi.string().alphanum().min(7).required(),
-    role: Joi.string().required()
+    role: Joi.string().required(),
+    gender: Joi.string().required()
 
 });
 
@@ -37,11 +38,5 @@ const ProviderRegSchema = Joi.object({
 const AppointmentRegSchema = Joi.object({
     apppointmentDate : Joi.date().required()
 })
-const DonationReqSchema = Joi.object({
-    title: Joi.string().required(),
-    description:  Joi.string().required(),
-    expiresOn: Joi.date(),
-    goalAmount : Joi.number().required(),
-})
 
-module.exports = {UserRegSchema, DonationReqSchema};
+module.exports = {UserRegSchema, };

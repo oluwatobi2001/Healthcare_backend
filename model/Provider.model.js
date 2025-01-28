@@ -1,15 +1,22 @@
+const { allow } = require('joi');
 const Sequelize = require('sequelize');
 const {v4: uuidv4} = require("uuid")
 
 module.exports  = (sequelize) => {
-    return sequelize.define('user', {
+    return sequelize.define('provider', {
         id: {
             type: Sequelize.DataTypes.UUID,
             defaultValue: Sequelize.DataTypes.UUIDV4,
                   allowNull: false,
             primaryKey: true
           },
-          user_id : {
+          userId : {
+            type: Sequelize.DataTypes.UUID,
+            allowNull: false, // Ensure this field is not null if required
+            references: {
+              model: 'users', // The name of the table you want to reference
+              key: 'id', // The column in the referenced table
+            },
 
           }, 
           description: {
@@ -18,22 +25,22 @@ module.exports  = (sequelize) => {
           },
 
           specialization : {
+            type:  Sequelize.DataTypes.STRING,
+            allowNull: false
 
           },
           location: {
 
-            type: Sequelize.DataTypes.ARRAY,
+            type: Sequelize.DataTypes.JSON ,
             allowNull: false,
 
           },
-          fee_cost: {
+          feeCost: {
             type: Sequelize.DataTypes.FLOAT,
             allowNull: true,
             default: 0
           },
-          avgRating : {
-
-          }
+         
 
     }
 )

@@ -1,12 +1,22 @@
 const Sequelize = require('sequelize');
+const {v4: uuidv4} = require("uuid")
+
+
 
 module.exports = (sequelize) => {
   return sequelize.define('token', {
+    id: {
+      type: Sequelize.DataTypes.UUID,
+      allowNull: false,
+      defaultValue: Sequelize.DataTypes.UUIDV4,
+      primaryKey : true
+    },
+
     userId: {
-      type: Sequelize.DataTypes.INTEGER,
+      type: Sequelize.DataTypes.UUID,
       allowNull: false,
       references: {
-        model: 'user',  // Reference to 'user' model
+        model: 'users',  // Reference to 'user' model
         key: 'id'
       }
     },

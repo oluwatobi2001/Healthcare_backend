@@ -1,38 +1,58 @@
 const httpStatus = require('http-status');
-const db = require('../model/');
+const db = require('../model');
 const ApiError = require('../utils/ApiError');
 const bcrypt = require("bcrypt");
 const User = db.user;
+const Token  = db.token;
+const {generateOtp} = require('../utils/generateOtp')
 
+const Provider =  db.Provider
 const createUser = async (userInfo) => {
-    try {
-      // Check if the email already exists in the database
-      const ifEmailExists = await User.findOne({ where: { email: userInfo.email } });
-      
-      if (ifEmailExists) {
-        throw new ApiError('Email has already been registered');
-      }
-    
+  try {
+    // Check if the email already exists in the database
+    const ifEmailExists = await User.findOne({ where: { email: userInfo.email } });
+    if (ifEmailExists) {
+      throw new ApiError('Email has already been registered');
+    }
+
+    // Validate password complexity (optional but recommended)
+    if (userInfo.password.length < 8) {
+      throw new ApiError('Password must be at least 8 characters long');
+    }
+
     // Hash the user's password before saving to the database
-    const saltRounds = 10; // Number of salt rounds for hashing
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(userInfo.password, saltRounds);
 
     // Update the userInfo object with the hashed password
     const newUserInfo = {
       ...userInfo,
-      password: hashedPassword, // Store the hashed password
+      password: hashedPassword,
     };
 
-    // Create the new user
+    // Create the new user in the database
     const newUser = await User.create(newUserInfo);
 
-    return newUser; // Return the created user object
-  } catch (error) {
-    // Handle errors such as validation or uniqueness constraint
-    throw error;
-  }
+    // Generate OTP
+    const otpDigit = generateOtp(6); // Ensure this function is defined or imported
+    console.log(`Generated OTP: ${otpDigit}`);
 
-  };
+    // Prepare and create the token
+    const tokenData = {
+      userId: newUser.id,
+      otp: otpDigit, // Store OTP if needed
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Example: OTP expires in 10 minutes
+    };
+
+    await Token.create(tokenData);
+
+    return newUser; // Optionally return the created user
+  } catch (error) {
+    console.error('Error creating user:', error.message);
+    throw error; // Re-throw the error for higher-level handling
+  }
+};
+
   const forgotPassword = () => {
 
   }
@@ -40,11 +60,33 @@ const createUser = async (userInfo) => {
 
   }
 
-  const AccountVerification= () => {
+  const AccountVerification= async() => {
 
+    const userOtp =  req.body.otp;
+try {
+   const  confirmOtp =  await  Token.findOne({otpNo: userOtp})
+    if (confirmOtp== req.user.id)  {
+     const updatedUser =  await User.update(req.user.id, {isVerified : true})
+    }
+
+} catch(err) {
+  throw err;
+}
+   
   }
 
-  const findHealthService = () => {
+  const findHealthService = async() => {
+    try {
+       const allServices =  await Provider.findAll();
+
+       return allServices
+    } catch (err) {
+      throw err
+    }
+
+   
+
+
 
   }
   const scheduleAppointment = ()=> {
