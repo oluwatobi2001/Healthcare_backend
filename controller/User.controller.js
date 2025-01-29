@@ -5,7 +5,17 @@ const { userService } = require('../service');
 
 const createUser = async( req, res, next) => {
     const user = await userService.createUser(req.body);
-    res.status(httpStatus.CREATED).send({msg: "User successfully created"});
+    res.status(httpStatus.CREATED).send({msg: "User successfully created. Kindly check your mail to verify your account. "});
+}
+const verifyAccount = async(req, res, next) => {
+const user = await userService.AccountVerification(req.body);
+if (user == '') {
+  throw new ApiError(httpStatus.NOT_FOUND, 'Verification unsuccessful');
+}
+else {
+res.status(200).send({msg: "Account successfuly verified.  Now you can login"})
+}
+
 }
 
 
@@ -29,5 +39,5 @@ const getUser = async (req, res) => {
   };  
 
   module.exports = {
-    updateUser, getUser, deleteUser, createUser
+    updateUser, getUser, deleteUser, createUser, verifyAccount
   }

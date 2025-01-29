@@ -4,9 +4,23 @@ const ApiError = require('../utils/ApiError');
 const bcrypt = require("bcrypt");
 const User = db.user;
 const Token  = db.token;
-const {generateOtp} = require('../utils/generateOtp')
+const Appointment   = db.Appointment
+const sendMail  = require('./MailService');
 
 const Provider =  db.Provider
+
+const generateOtp =(len)=> {
+  const digits = '123456789';
+  let OTP = '';
+  for (let i = 0; i < len; i++) {
+      OTP += digits[Math.floor(Math.random() * 10)];
+  }
+
+  return OTP;
+  
+};
+
+
 const createUser = async (userInfo) => {
   try {
     // Check if the email already exists in the database
@@ -34,18 +48,25 @@ const createUser = async (userInfo) => {
     const newUser = await User.create(newUserInfo);
 
     // Generate OTP
-    const otpDigit = generateOtp(6); // Ensure this function is defined or imported
+    const otpDigit = generateOtp(6) // Ensure this function is defined or imported
     console.log(`Generated OTP: ${otpDigit}`);
 
     // Prepare and create the token
     const tokenData = {
       userId: newUser.id,
-      otp: otpDigit, // Store OTP if needed
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // Example: OTP expires in 10 minutes
+      otpNo: otpDigit, // Store OTP if needed
+      expiryTime: new Date(Date.now() + 10 * 60 * 1000), // Example: OTP expires in 10 minutes
     };
 
     await Token.create(tokenData);
 
+    const EmailSub = 'Account VerificationInfo'
+
+    const mailVerification = await sendMail(  newUser.email, EmailSub, otpDigit )
+    if (mailVerification) {
+      console.log("email  successfully sent");
+
+    }
     return newUser; // Optionally return the created user
   } catch (error) {
     console.error('Error creating user:', error.message);
@@ -60,13 +81,20 @@ const createUser = async (userInfo) => {
 
   }
 
-  const AccountVerification= async() => {
+  const AccountVerification= async(otpInfo) => {
 
-    const userOtp =  req.body.otp;
+    const userOtp =    parseInt(otpInfo.otp) ;
+
 try {
-   const  confirmOtp =  await  Token.findOne({otpNo: userOtp})
-    if (confirmOtp== req.user.id)  {
-     const updatedUser =  await User.update(req.user.id, {isVerified : true})
+   const  confirmOtp =  await  Token.findOne({ where: {otpNo: userOtp} })
+
+    if (confirmOtp )  {
+      
+     const updatedUser =  await User.update({isVerified : true}, { where : {id: confirmOtp.userId} })
+     if (updatedUser) {
+    console.log(updatedUser)
+    return updatedUser
+     }
     }
 
 } catch(err) {
@@ -78,6 +106,7 @@ try {
   const findHealthService = async() => {
     try {
        const allServices =  await Provider.findAll();
+       console.log(allServices)
 
        return allServices
     } catch (err) {
@@ -89,7 +118,29 @@ try {
 
 
   }
-  const scheduleAppointment = ()=> {
+  const scheduleAppointment = async()=> {
+const providerDets = req.params.providerId;
+    const {date} =  req.body;
+    const appointmentDetails = 
+     {
+      patientId : req.user.id,
+      appointmentDate : date,
+      providerId : providerDets,
+      status: 'pending'
+    }
+    try {
+       const newAppointment = await Appointment.create( appointmentDetails);
+    if(!newAppointment){
+      throw new ApiError()
+
+ }
+ else {
+  return newAppointment;
+ }
+    } catch (err) {
+      throw err
+    }
+   
 
   }
 
@@ -167,7 +218,10 @@ module.exports = {
     createUser,
     updateUser,
   deleteUser,
-  FetchUser
+  FetchUser,
+  AccountVerification,
+  findHealthService, 
+  scheduleAppointment
     
   };
   

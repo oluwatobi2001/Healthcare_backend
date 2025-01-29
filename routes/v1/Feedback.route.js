@@ -1,13 +1,17 @@
-const UserController  = require('../../controller/User.controller')
+
 const express =  require("express");
+const { Feedback } = require("../../model");
+const { fetchReviews, GiveReview, deleteReview, EditReview } = require("../../controller/Feedbacks.controller");
 const router = express.Router();
-const {UserRegSchema} = require('../../middlewares/validate')
-const getAuthenticated  = require("../../middlewares/auth")
 
 
-router.route("/:providerId/all-ratings").get()
 
-router.post("/:providerId/rate").post();
 
-router.delete("/:rateId").delete();
+router.route("/:providerId/all-ratings").get(fetchReviews)
 
+router.route("/:providerId/rate").post(GiveReview);
+
+router.route("/:rateId").delete(deleteReview);
+router.route("/:rateId").put(EditReview);
+
+module.exports = router;

@@ -15,6 +15,7 @@ const validateCreateUser = (req, res, next) => {
 };
 
 router.route("/").post(validateCreateUser ,  UserController.createUser);
+router.route("/verify-otp").post(UserController.verifyAccount)
 router.route('/:id?').get(getAuthenticated, UserController.getUser);
 router.route('/:id').put(getAuthenticated,   validateCreateUser, UserController.updateUser);
 router.route('/:id').delete(getAuthenticated, UserController.deleteUser)
