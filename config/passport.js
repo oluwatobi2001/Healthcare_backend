@@ -1,7 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcrypt");
 const db = require("../model"); // Sequelize models are assumed to be here
-const User = db.user; // Your User model
+const User = db.User; // Your User model
 
 module.exports = function (passport) {
   // Configure LocalStrategy for Passport
@@ -38,13 +38,14 @@ module.exports = function (passport) {
 
   // Serialize user to store user ID in the session
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, {id: user.id, role: user.role} );
   });
 
   // Deserialize user to retrieve user data by ID
-  passport.deserializeUser(async (id, done) => {
+  passport.deserializeUser(async (deserializedUser, done) => {
     try {
-      const user = await User.findByPk(id);
+      const user = await User.findByPk(deserializedUser.id);
+      console.log(user)
       done(null, user);
     } catch (err) {
       done(err);

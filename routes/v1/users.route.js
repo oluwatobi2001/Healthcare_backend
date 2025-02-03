@@ -2,7 +2,7 @@ const UserController  = require('../../controller/User.controller')
 const express =  require("express");
 const router = express.Router();
 const {UserRegSchema} = require('../../middlewares/validate')
-const getAuthenticated  = require("../../middlewares/auth")
+const {isUserVerified, isUserAdmin, userLoggedIn} = require("../../middlewares/verifyUser")
 
 const validateCreateUser = (req, res, next) => {
     const { error } = UserRegSchema.validate(req.body);
@@ -16,9 +16,9 @@ const validateCreateUser = (req, res, next) => {
 
 router.route("/").post(validateCreateUser ,  UserController.createUser);
 router.route("/verify-otp").post(UserController.verifyAccount)
-router.route('/:id?').get(getAuthenticated, UserController.getUser);
-router.route('/:id').put(getAuthenticated,   validateCreateUser, UserController.updateUser);
-router.route('/:id').delete(getAuthenticated, UserController.deleteUser)
+router.route('/:id?').get(userLoggedIn, UserController.getUser);
+router.route('/:id').put(   UserController.updateUser);
+router.route('/:id').delete(  isUserAdmin,  isUserVerified, userLoggedIn, UserController.deleteUser)
 
 
 module.exports = router;

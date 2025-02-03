@@ -1,18 +1,37 @@
-const SequelCOnfig = require('../config/sequelize');
+
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(SequelCOnfig.DB, SequelCOnfig.USER, SequelCOnfig.PASSWORD, {
-    host: SequelCOnfig.HOST,
-    dialect: SequelCOnfig.dialect
-});
+require("dotenv").config();
+const sequelize = new Sequelize(
+  process.env.MYDB,
+  process.env.MYUSER,
+  process.env.MYPASSWORD,
+  {
+    host: process.env.MYHOST,
+    port: process.env.PORT,
+    dialect: "mysql",
+    logging: false, // Prevents console spam
+  }
+);
+
+// Sync database (ONLY in development)
+
+  sequelize
+    .sync({alter: true})
+    .then(() => console.log('Database successfully synced'))
+    .catch(error => console.error('Database sync error:', error));
+
 
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.user = require('../model/user.model')(sequelize, Sequelize);
-db.Provider = require('../model/Provider.model')(sequelize, Sequelize)
-db.Feedback = require('../model/Feedbacks.model')(sequelize, Sequelize)
-db.Appointment = require('../model/Appointment.model')(sequelize, Sequelize)
 
-db.token = require('../model/token.model')(sequelize, Sequelize);
-console.log(db)
-module.exports= db;
+// Load models properly
+db.User = require('../model/user.model')(sequelize, Sequelize);
+db.Provider = require('../model/Provider.model')(sequelize, Sequelize);
+db.Feedback = require('../model/Feedbacks.model')(sequelize, Sequelize);
+db.Appointment = require('../model/Appointment.model')(sequelize, Sequelize);
+db.Reminder =  require('../model/Reminder.model')(sequelize, Sequelize)
+db.Token = require('../model/token.model')(sequelize, Sequelize);
+
+// Export database object
+module.exports = db;

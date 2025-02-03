@@ -19,6 +19,11 @@ module.exports  = (sequelize) => {
             },
 
           }, 
+          name: { 
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+          },
+
           description: {
             type: Sequelize.DataTypes.STRING,
             allowNull: false,
@@ -35,6 +40,15 @@ module.exports  = (sequelize) => {
             allowNull: false,
 
           },
+          address : {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+          },
+          contactInfo: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false,
+          },
+
           feeCost: {
             type: Sequelize.DataTypes.FLOAT,
             allowNull: true,

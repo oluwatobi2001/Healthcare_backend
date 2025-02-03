@@ -26,7 +26,7 @@ const deleteUser = async (req, res) => {
 
   
 const getUser = async (req, res) => {
-    const user = await userService.FetchUser();
+    const user = await userService.fetchUser(req.params.id);
     if (user == '') {
       throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
     }

@@ -1,80 +1,97 @@
 const httpStatus = require('http-status');
 const db = require('../model');
 const ApiError = require('../utils/ApiError');
-const bcrypt = require("bcrypt");
-const User = db.user;
-const Token  = db.token;
+const Provider = db.Provider;
 
-const Provider = db.Provider
-
-const createProvider = async(req) => {
-
-    
-try {
-const {description, feeCost,  location, specialization } = req.body;
-console.log(req.user)
-const creatorInfo = req.user.id
-
-    const providerDetails  = {
-        description , feeCost, location, specialization, userId: creatorInfo
-    }
-
-    const newProvider = await Provider.create(providerDetails)
-    if(!newProvider ) {
-        throw new ApiError()
-    }
-
-    else {
-        console.log(newProvider)
-      return newProvider  
-    } 
-}
-catch (err) {
-
-}
-
-
-}
-
-const editProvider =() => {
-
-}
-
-const deleteProvider = async(providerId) => {
-console.log(providerId)
-try {
-    const deleteProvider = await Provider.destroy({ where: {id: providerId} })
-    console.log(deleteProvider)
-
-} catch(err) {
-    console.log(err)
-    throw new Error
-}
-
-
-
-}
-
-const findHealthService = async() => {
+const createProvider = async (req) => {
     try {
-       const allServices =  await Provider.findAll();
-       console.log(allServices)
+        const { description, feeCost, location, specialization, name, address, contactInfo } = req.body;
+        const creatorInfo = req.user.id;
 
-       return allServices
+        if (!description || !feeCost || !location || !specialization) {
+            throw new ApiError(httpStatus.BAD_REQUEST, "All provider details are required.");
+        }
+
+        const newProvider = await Provider.create({
+            description,
+            name,
+            address,
+            feeCost,
+            location,
+            contactInfo,
+            specialization,
+            userId: creatorInfo
+        });
+
+        return newProvider;
     } catch (err) {
-      throw err
+        console.error("Error creating provider:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
     }
+};
 
-   
+const editProvider = async (req) => {
+    try {
+        const providerId = req.params.providerId;
+        const { body } = req;
 
+        const provider = await Provider.findOne({ where: { id: providerId } });
 
+        if (!provider) {
+            throw new ApiError(httpStatus.NOT_FOUND, "Provider not found.");
+        }
 
-  }
+        await Provider.update(body, { where: { id: providerId } });
+
+        return { message: "Provider updated successfully" };
+    } catch (err) {
+        console.error("Error updating provider:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+    }
+};
+
+const deleteProvider = async (req) => {
+    try {
+        const providerId = req.params.providerId;
+
+        const provider = await Provider.findOne({ where: { id: providerId } });
+        if (!provider) {
+            throw new ApiError(httpStatus.NOT_FOUND, "Provider not found.");
+        }
+
+        await Provider.destroy({ where: { id: providerId } });
+
+        return { message: "Provider deleted successfully" };
+    } catch (err) {
+        console.error("Error deleting provider:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+    }
+};
+
+const findHealthService = async (req) => {
+    try {
+        const { providerId} = req.params;
+
+        if (!providerId) {
+            const allServices = await Provider.findAll();
+            return allServices;
+        }
+
+        const specificService = await Provider.findOne({ where: { id: providerId } });
+        if (!specificService) {
+            throw new ApiError(httpStatus.NOT_FOUND, "Health service not found.");
+        }
+
+        return specificService;
+    } catch (err) {
+        console.error("Error finding health service:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+    }
+};
+
 module.exports = {
- createProvider,
- editProvider,
- deleteProvider,
- findHealthService
-    
-  };
-  
+    createProvider,
+    editProvider,
+    deleteProvider,
+    findHealthService
+};
