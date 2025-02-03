@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
   process.env.MYPASSWORD,
   {
     host: process.env.MYHOST,
-    port: process.env.PORT,
+    port: process.env.SQLPORT,
     dialect: "mysql",
     logging: false, // Prevents console spam
   }

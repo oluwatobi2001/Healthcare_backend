@@ -42,6 +42,6 @@ app.use('/v1', routes);
 
 // Start server
 const port =  5000;
-app.listen(5000, () => {
+app.listen(process.env.PORT, () => {
   console.log(`App is successfully running on port ${port}`);
 });
