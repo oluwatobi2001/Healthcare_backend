@@ -72,4 +72,18 @@ const suspendProvider =() =>{
 
 }
 
-module.exports = {ActiveUsers, ActiveProviders, sendBroadcast, ApproveProvider, deleteProvider, suspendProvider}
+const makeAdmin = async(req) => {
+    const {userId} = req.params;
+
+try{
+const setAdmin = await User.update({role: "admin"}, {where: {id: userId}})
+    
+    return setAdmin
+} catch(err) {
+    console.log(err)
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+}
+    
+    
+}
+module.exports = {ActiveUsers, ActiveProviders, sendBroadcast, ApproveProvider, deleteProvider, suspendProvider, makeAdmin}

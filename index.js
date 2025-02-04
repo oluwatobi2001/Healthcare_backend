@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors")
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const session = require("express-session");
@@ -6,7 +7,7 @@ const passport = require("passport");
 const routes = require('./routes/v1');
 const db = require('./model'); // Assuming Sequelize models are here
 const sendNotification = require("./service/notification.service");
-
+app.use(cors());
 
 
 const app = express();

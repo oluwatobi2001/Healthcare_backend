@@ -54,6 +54,14 @@ module.exports  = (sequelize) => {
             allowNull: true,
             default: 0
           },
+          isApproved : {
+            type: Sequelize.DataTypes.BOOLEAN,
+            defaultValue: false
+          },
+          isSuspended : {
+            type: Sequelize.DataTypes.BOOLEAN,
+            defaultValue: false
+          }
          
 
     }
