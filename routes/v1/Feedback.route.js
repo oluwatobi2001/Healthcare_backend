@@ -11,7 +11,7 @@ router.route("/:providerId/all-ratings").get(fetchReviews)
 
 router.route("/:providerId/rate").post(GiveReview);
 
-router.route("/:rateId").delete(deleteReview);
-router.route("/:rateId").put(EditReview);
+router.route("/:feedbackId").delete(deleteReview);
+router.route("/:feedbackId").put(EditReview);
 
 module.exports = router;

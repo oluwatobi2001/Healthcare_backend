@@ -48,7 +48,39 @@ const fetchFeedbacks = async (req) => {
     }
 };
 
+
+const deleteFeedbacks =async(req) => {
+    const {feedbackId} = req.params;
+    try {
+       const deleteFeedbacks = await Feedback.destroy({where : {id :feedbackId}});
+    console.log(deleteFeedbacks);
+    return deleteFeedbacks; 
+    } catch(err) {
+        console.error("Error deleting feedbacks:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+    }
+
+    
+
+}
+const editFeedbacks = async(req) => {
+    const {feedbackId} = req.params;
+const {rating, comment} = req.body;
+
+    try {
+        const editedFeedback = await Feedback.update({rating, comment}, {where: {id : feedbackId }});
+        console.log(editedFeedback);
+
+        return editedFeedback
+
+    } catch (err) {
+        console.error("Error editing feedbacks:", err);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message);
+    }
+
+
+}
 module.exports = {
     submitFeedback,
-    fetchFeedbacks
+    fetchFeedbacks, deleteFeedbacks, editFeedbacks
 };

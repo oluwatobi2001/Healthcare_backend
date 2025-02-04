@@ -29,7 +29,7 @@ app.use(passport.session());
 sendNotification();
 // Passport configuration
 require('./config/passport')(passport);
-console.log(process.env)
+
 // Database sync
 db.sequelize.sync().then(() => {
   console.log('Database synced successfully');

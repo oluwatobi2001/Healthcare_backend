@@ -91,10 +91,12 @@ const getAllAppointments = async (req) => {
 
 const cancelAppointment = async (req) => {
     try {
-        const appointmentId = req.params.appointmentId;
+        const{appointmentId}  = req.params;
+        console.log(appointmentId)
         const userId = req.user.id;
 
         const fetchAppointment = await Appointment.findOne({ where: { id: appointmentId } });
+        console.log(fetchAppointment)
         if (!fetchAppointment) {
             throw new ApiError(httpStatus.NOT_FOUND, "Appointment not found.");
         }

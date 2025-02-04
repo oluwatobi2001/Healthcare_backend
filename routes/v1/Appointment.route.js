@@ -12,7 +12,7 @@ router.route("/view-appointments").get(userLoggedIn, AppointmentController.ViewA
 
 router.route("/confirm-appointment/:appointmentId").put( userLoggedIn, AppointmentController.confirmAppointment);
 
-router.route("/cancel-appointment/:appointmentId").put(userLoggedIn, AppointmentController.cancelAppointment);
+router.route("/cancel-appointment/:appointmentId").put(userLoggedIn, AppointmentController.CancelAppointment);
 
 
 

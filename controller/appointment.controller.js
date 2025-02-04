@@ -52,7 +52,7 @@ const ViewAppointments = async (req, res, next) => {
 /**
  * Controller to cancel an appointment.
  */
-const cancelAppointment = async (req, res, next) => {
+const CancelAppointment = async (req, res, next) => {
   try {
     const canceledAppointment = await AppointmentService.cancelAppointment(req);
     console.log('Appointment canceled:', canceledAppointment);
@@ -115,7 +115,7 @@ const EditAppointment = async (req, res, next) => {
 module.exports = {
   CreateAppointment,
   ViewAppointments,
-  cancelAppointment,
+  CancelAppointment,
   confirmAppointment,
   EditAppointment,
 };

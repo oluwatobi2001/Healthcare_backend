@@ -6,8 +6,8 @@ const sequelize = new Sequelize(
   process.env.MYUSER,
   process.env.MYPASSWORD,
   {
-    host: process.env.MYHOST,
-    port: process.env.SQLPORT,
+    host:  process.env.MYHOST,
+   port:  process.env.SQLPORT,
     dialect: "mysql",
     logging: false, // Prevents console spam
   }
@@ -16,7 +16,7 @@ const sequelize = new Sequelize(
 // Sync database (ONLY in development)
 
   sequelize
-    .sync({alter: true})
+    .sync()
     .then(() => console.log('Database successfully synced'))
     .catch(error => console.error('Database sync error:', error));
 
@@ -32,6 +32,6 @@ db.Feedback = require('../model/Feedbacks.model')(sequelize, Sequelize);
 db.Appointment = require('../model/Appointment.model')(sequelize, Sequelize);
 db.Reminder =  require('../model/Reminder.model')(sequelize, Sequelize)
 db.Token = require('../model/token.model')(sequelize, Sequelize);
-
+db.Insurance = require('../model/Insurance.model')(sequelize, Sequelize);
 // Export database object
 module.exports = db;
