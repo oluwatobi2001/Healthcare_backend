@@ -7,14 +7,14 @@ const passport = require("passport");
 const routes = require('./routes/v1');
 const db = require('./model'); // Assuming Sequelize models are here
 const sendNotification = require("./service/notification.service");
-app.use(cors());
+
 
 
 const app = express();
 
 // Middleware
 dotenv.config();
-
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(session({
