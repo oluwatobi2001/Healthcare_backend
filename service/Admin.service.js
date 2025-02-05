@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const { User } = require("../model");
+const { User, Provider } = require("../model");
 const ApiError = require("../utils/ApiError");
 const sendMail = require("./MailService");
 
@@ -61,15 +61,35 @@ const ActiveProviders =async() => {
           
 }
 
-const ApproveProvider =() =>{
+const ApproveProvider =async(req) =>{
+    const {providerId} = req.params;
 
+    try{
+        const setAdmin = await Provider.update({isApproved: true}, {where: {id: providerId}})
+            
+            return setAdmin
+        } catch(err) {
+            console.log(err)
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "user cannot be suspended now. Please try again later");
+        }
+            
 }
 
 const deleteProvider =() =>{
 
 }
-const suspendProvider =() =>{
+const suspendProvider =async(req) =>{
+const {providerId} = req.params;
 
+try{
+    const setAdmin = await Provider.update({isSuspended: true}, {where: {id: providerId}})
+        
+        return setAdmin
+    } catch(err) {
+        console.log(err)
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "user cannot be suspended now. Please try again later");
+    }
+        
 }
 
 const makeAdmin = async(req) => {

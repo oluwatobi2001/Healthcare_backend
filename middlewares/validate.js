@@ -12,7 +12,7 @@ const UserRegSchema =  Joi.object({
     firstName : Joi.string().min(3).max(30),
     lastName: Joi.string().min(3).max(30),
     role: Joi.string(),
-    phoneNumber: Joi.string().pattern(/^\d{1,11}$/),
+    phoneNumber: Joi.string(),
     password: Joi.string().alphanum().min(7).required(),
     
     gender: Joi.string()

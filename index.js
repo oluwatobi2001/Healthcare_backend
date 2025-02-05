@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
 const routes = require('./routes/v1');
-const db = require('./model'); // Assuming Sequelize models are here
+const db = require('./model'); 
 const sendNotification = require("./service/notification.service");
 
 
