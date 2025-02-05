@@ -13,15 +13,15 @@ module.exports = (sequelize) => {
     },
     firstName: {
       type: Sequelize.DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     lastName: {
       type: Sequelize.DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     phoneNumber : {
       type: Sequelize.DataTypes.STRING(12),
-  allowNull: false
+  allowNull: true
     },
     email: {
       type: Sequelize.DataTypes.STRING,
@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     },
     gender: {
       type: Sequelize.DataTypes.ENUM("male", "female"),
-      allowNull: false
+      allowNull: true
     },
     password: {
       type: Sequelize.DataTypes.STRING,
@@ -38,7 +38,7 @@ module.exports = (sequelize) => {
     },
     role: {
       type: Sequelize.DataTypes.ENUM('admin', 'patient', 'provider'),  
-      allowNull: false,
+    
       defaultValue: 'patient',
     },
     emergencyContactName: {
