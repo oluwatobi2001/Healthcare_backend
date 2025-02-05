@@ -19,19 +19,20 @@ const createUser = async (userInfo) => {
   try {
     const emailExists = await User.findOne({ where: { email: userInfo.email } });
     if (emailExists) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Email is already registered.');
+      return  ApiError(httpStatus.BAD_REQUEST, 'Email is already registered.');
     }
 
     const hashedPassword = await bcrypt.hash(userInfo.password, 10);
     const newUser = await User.create({ ...userInfo, password: hashedPassword });
 
     const otpDigit = generateOtp(6);
-    await Token.create({
+   const createdToken = await Token.create({
       userId: newUser.id,
       otpNo: otpDigit,
       expiryTime: new Date(Date.now() + 10 * 60 * 1000),
     });
-
+console.log(createdToken)
+console.log(otpDigit);
     await sendMail(newUser.email, 'Account Verification Info', otpDigit);
     console.log("Email successfully sent");
 
@@ -39,6 +40,7 @@ const createUser = async (userInfo) => {
  
 } catch (error) {
   if (error instanceof ApiError) {
+    console.log(error)
       throw error; 
   }
   throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."); 
