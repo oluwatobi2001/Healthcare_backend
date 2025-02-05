@@ -5,7 +5,7 @@ const { userService } = require('../service');
 
 const createUser = async( req, res, next) => {
   try {
-    const result = await createUser(req.body);
+    const result = await userService.createUser(req.body);
     return res.status(result.status).json({ message: result.message });
   } catch (error) {
     console.error("Unhandled error in createUserHandler:", error);
