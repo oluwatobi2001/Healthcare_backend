@@ -36,12 +36,14 @@ const createUser = async (userInfo) => {
     console.log("Email successfully sent");
 
     return { message: "User created successfully. OTP sent for verification." };
-  } catch (error) {
-    console.error("Error creating user:", error);
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.message);
+ 
+} catch (error) {
+  if (error instanceof ApiError) {
+      throw error; 
   }
-};
-
+  throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."); 
+}
+}
 const forgotPassword = async (req) => {
   try {
     const { email } = req.body;
