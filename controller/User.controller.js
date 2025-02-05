@@ -4,8 +4,13 @@ const { userService } = require('../service');
 
 
 const createUser = async( req, res, next) => {
-    const user = await userService.createUser(req.body);
-    res.status(httpStatus.CREATED).send({msg: "User successfully created. Kindly check your mail to verify your account. "});
+  try {
+    const result = await createUser(req.body);
+    return res.status(result.status).json({ message: result.message });
+  } catch (error) {
+    console.error("Unhandled error in createUserHandler:", error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: "An unexpected error occurred." });
+  }
 }
 const verifyAccount = async(req, res, next) => {
 const user = await userService.AccountVerification(req.body);

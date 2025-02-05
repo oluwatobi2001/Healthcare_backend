@@ -17,34 +17,43 @@ const generateOtp = (len) => {
 
 const createUser = async (userInfo) => {
   try {
+    // Check if the email already exists
     const emailExists = await User.findOne({ where: { email: userInfo.email } });
     if (emailExists) {
-      return  ApiError(httpStatus.BAD_REQUEST, 'Email is already registered.');
+      return { status: httpStatus.BAD_REQUEST, message: 'Email is already registered.' };
     }
 
+    // Hash the password before saving
     const hashedPassword = await bcrypt.hash(userInfo.password, 10);
     const newUser = await User.create({ ...userInfo, password: hashedPassword });
 
+    // Generate OTP
     const otpDigit = generateOtp(6);
-   const createdToken = await Token.create({
+    const createdToken = await Token.create({
       userId: newUser.id,
       otpNo: otpDigit,
       expiryTime: new Date(Date.now() + 10 * 60 * 1000),
     });
-console.log(createdToken)
-console.log(otpDigit);
-    await sendMail(newUser.email, 'Account Verification Info', otpDigit);
-    console.log("Email successfully sent");
 
-    return { message: "User created successfully. OTP sent for verification." };
- 
-} catch (error) {
-  if (error instanceof ApiError) {
-    console.log(error)
-      throw error; 
+    console.log("Generated OTP:", otpDigit);
+    console.log("Created Token:", createdToken);
+
+    // Send verification email
+    try {
+      await sendMail(newUser.email, 'Account Verification Info', otpDigit);
+      console.log("Email successfully sent.");
+    } catch (mailError) {
+      console.error("Error sending email:", mailError);
+      return { status: httpStatus.INTERNAL_SERVER_ERROR, message: 'User created, but failed to send verification email.' };
+    }
+
+    return { status: httpStatus.CREATED, message: "User created successfully. OTP sent for verification." };
+
+  } catch (error) {
+    console.error("Error in createUser:", error);
+    return { status: httpStatus.INTERNAL_SERVER_ERROR, message: "Something went wrong. Please try again later." };
   }
-  throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."); 
-}
+
 }
 const forgotPassword = async (req) => {
   try {
