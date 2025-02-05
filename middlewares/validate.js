@@ -9,13 +9,13 @@ const UserRegSchema =  Joi.object({
             allow: ['com', 'net']
         }
     }),
-    firstName : Joi.string().min(3).max(30).required(),
-    lastName: Joi.string().min(3).max(30).required(),
-    role: Joi.string().required(),
-    phoneNumber: Joi.string().pattern(/^\d{1,11}$/).required(),
+    firstName : Joi.string().min(3).max(30),
+    lastName: Joi.string().min(3).max(30),
+    role: Joi.string(),
+    phoneNumber: Joi.string().pattern(/^\d{1,11}$/),
     password: Joi.string().alphanum().min(7).required(),
-    role: Joi.string().required(),
-    gender: Joi.string().required()
+    
+    gender: Joi.string()
 
 });
 
