@@ -13,7 +13,7 @@ const createUser = async( req, res, next) => {
   }
 }
 const verifyAccount = async(req, res, next) => {
-const user = await userService.AccountVerification(req.body);
+const user = await userService.accountVerification(req.body);
 if (user == '') {
   throw new ApiError(httpStatus.NOT_FOUND, 'Verification unsuccessful');
 }
